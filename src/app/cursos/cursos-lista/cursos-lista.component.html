@@ -1,42 +1,53 @@
 <div class="card">
   <div class="card-header">
-
     <div class="float-left">
-      <h5>
+      <h4>
         Cursos
-      </h5>
+      </h4>
     </div>
 
     <div class="float-right">
-      <a href="#" class="btn btn-primary text-rigth">Novo curso</a>
-
+      <button type="button" class="btn btn-primary text-rigth mr-1" [routerLink]="['/teste']">Novo curso</button>
+      <button type="button" class="btn btn-secondary text-rigth" (click)="onRefresh()">Atualizar</button>
     </div>
 
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Curso</th>
-      </tr>
-    </thead>
-    <!-- <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>mdo</td>
-      </tr>
-    </tbody> -->
+  <div class="card-body" >
+    <table class="table" *ngIf="courses$ | async as courses; else loadingError">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Curso</th>
+        </tr>
+      </thead>
+      <tbody>
 
-    <tfoot>
-      <tr >
-        <td colspan="2" >
-          <a href="#" class="btn btn-outline-warning float-right">Atualizar</a>
-          <a href="#" class="btn btn-outline-danger float-right">Remover</a>
-        </td>
-    </tr>
-    </tfoot>
-  </table>
+        <tr *ngFor="let course of courses">
+          <td>{{ course.id}}</td>
+          <td>{{ course.name}}</td>
+          <td colspan="2" >
+            <button type="button" class="btn btn-outline-danger float-right">Remover</button>
+            <button type="button" class="btn btn-outline-warning float-right mr-1">Atualizar</button>
+          </td>
+        </tr>
 
+      </tbody>
+    </table>
+    <ng-template #loadingError>
+      <div *ngIf="error$ | async else loading">
+        <span>Erro ao carregar cursos tente novamente mais tarde.</span>
+      </div>
+    </ng-template>
+
+    <ng-template #loading>
+      <div class="d-flex justify-content-center">
+        <div class="spinner-border text-primary m-3" style="width: 3rem; height: 3rem;" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="align-self-center">
+          Loading courses...
+        </div>
+      </div>
+    </ng-template>
+  </div>
 </div>
