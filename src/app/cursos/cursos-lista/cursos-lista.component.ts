@@ -1,4 +1,4 @@
-import { AlertModalService } from './../../shared/alert-modal.service';
+import { AlertModalService } from '../../shared/services/alert-modal.service';
 import { Course } from './../models/course';
 import { Component, OnInit } from '@angular/core';
 import { CursosService } from '../cursos.service';
