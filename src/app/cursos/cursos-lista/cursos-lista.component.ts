@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { CursosService } from '../cursos.service';
 import { catchError, Observable, of, Subject } from 'rxjs';
 import { AlertTypes } from '../../shared/alert-typer.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cursos-lista',
@@ -16,7 +17,7 @@ export class CursosListaComponent implements OnInit{
   error$ = new Subject<boolean>();
 
   constructor(private cursosService: CursosService,
-    private alertModalService: AlertModalService){}
+    private alertModalService: AlertModalService, private router: Router){}
 
   ngOnInit() {
     this.onRefresh();
@@ -37,6 +38,10 @@ export class CursosListaComponent implements OnInit{
 
   private handleError() {
     this.alertModalService.showAlert(AlertTypes.DANGER, 'Error ao carrgar a lista de cursos, tente novamente mais tarde');
+  }
+
+  onEdit(course: Course) {
+    this.router.navigate(['cursos/editar', course.id])
   }
 
 

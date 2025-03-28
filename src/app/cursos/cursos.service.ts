@@ -9,10 +9,10 @@ import { Course } from './models/course';
 export class CursosService {
 
   constructor(private httpClient: HttpClient) { }
-  private readonly URI: string = "http://localhost:8080";
+  private readonly URI: string = "http://localhost:8080/courses";
 
   getCourses(): Observable<Course[]> {
-    return this.httpClient.get<Course[]>(`${this.URI}/courses`).pipe(
+    return this.httpClient.get<Course[]>(`${this.URI}`).pipe(
      // map(response => response.courses),
       delay(2000),
       tap(re => console.log(re)
@@ -20,8 +20,20 @@ export class CursosService {
     );
   }
 
+  loadById(id: number) {
+    return this.httpClient.get<Course>(`${this.URI}/${id}`).pipe(
+      take(1)
+    );
+  }
+
   createCourse(course: Course) {
-    return this.httpClient.post(`${this.URI}/courses`, course).pipe(
+    return this.httpClient.post(`${this.URI}/created`, course).pipe(
+      take(1)
+    );
+  }
+
+  updateCourse(course: Course) {
+    return this.httpClient.post(`${this.URI}/updated`, course).pipe(
       take(1)
     );
   }

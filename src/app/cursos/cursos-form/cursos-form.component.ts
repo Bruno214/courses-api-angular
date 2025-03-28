@@ -4,24 +4,42 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ValidationMessages } from '../../validation/validation-message';
 import { AlertTypes } from '../../shared/alert-typer.enum';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Course } from '../models/course';
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-cursos-form',
   templateUrl: './cursos-form.component.html',
-  styleUrl: './cursos-form.component.scss'
+  styleUrl: './cursos-form.component.scss',
 })
-export class CursosFormComponent implements OnInit{
+export class CursosFormComponent implements OnInit {
   form!: FormGroup;
   submitted: boolean = false;
-  messageError: string = "";
+  messageError: string = '';
+  course!: Course;
 
-
-  constructor(private fb: FormBuilder, private cursosService: CursosService, private alertModalService: AlertModalService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private cursosService: CursosService,
+    private alertModalService: AlertModalService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    this.course = this.route.snapshot.data['course'];
+
     this.form = this.fb.group({
-      name: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]]
+      id: this.course.id,
+      name: [
+        this.course.name,
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(250),
+        ],
+      ],
     });
   }
 
@@ -29,17 +47,40 @@ export class CursosFormComponent implements OnInit{
     this.submitted = true;
 
     if (this.form.valid) {
-      console.log('submit', this.form.value);
-      this.cursosService.createCourse(this.form.value).subscribe(
-        success => {
-          var nameCourse = this.form.value['name'];
-          this.alertModalService.showAlert(AlertTypes.SUCCESS, `O curso ${nameCourse} foi inserido com sucesso.`, 3000);
-          this.router.navigate(['/cursos'])
-        },
-        error => this.alertModalService.showAlert(AlertTypes.DANGER, 'Error ao criar curso, tente novamente'),
-        () =>  console.log()
-
-      );
+      // this.cursosService.createCourse(this.form.value).subscribe(
+      //   (success) => {
+      //     var nameCourse = this.form.value['name'];
+      //     this.alertModalService.showAlert(
+      //       AlertTypes.SUCCESS,
+      //       `O curso ${nameCourse} foi inserido com sucesso.`,
+      //       3000
+      //     );
+      //     this.router.navigate(['/cursos']);
+      //   },
+      //   (error) =>
+      //     this.alertModalService.showAlert(
+      //       AlertTypes.DANGER,
+      //       'Error ao criar curso, tente novamente'
+      //     )
+      // );
+      console.log('salvando course', this.form.value);
+    } else {
+      // this.cursosService.updateCourse(this.course).subscribe(
+      //   (success) => {
+      //     var nameCourse = this.form.value['name'];
+      //     this.alertModalService.showAlert(
+      //       AlertTypes.SUCCESS,
+      //       `O curso ${nameCourse} foi editado com sucesso.`,
+      //       3000
+      //     );
+      //     this.router.navigate(['/cursos']);
+      //   },
+      //   (error) =>
+      //     this.alertModalService.showAlert(
+      //       AlertTypes.DANGER,
+      //       'Error ao editar curso, tente novamente'
+      //     )
+      // );
     }
   }
 
@@ -52,7 +93,10 @@ export class CursosFormComponent implements OnInit{
     return this.form.get(field)?.errors == null ? false : true;
   }
 
-  getMessageError(field: string): string{
-    return ValidationMessages.getErrorMessage(field, this.form.get(field)?.errors)
+  getMessageError(field: string): string {
+    return ValidationMessages.getErrorMessage(
+      field,
+      this.form.get(field)?.errors
+    );
   }
 }
