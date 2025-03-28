@@ -1,16 +1,16 @@
 <form class="needs-validation mt-4" novalidate [formGroup]="form">
   <div class="form-row">
     <div class="col-sm-12">
-      <label for="nome">Nome do Curso</label>
+      <label for="name">Nome do Curso</label>
       <input type="text"
        class="form-control"
-       id="nome"
+       id="name"
        placeholder="Nome do Curso"
-       formControlName="nome"
-       [ngClass]="{'is-invalid' : submitted && hasError('nome')}"
+       formControlName="name"
+       [ngClass]="{'is-invalid' : submitted && hasError('name')}"
        >
       <div class="invalid-feedback">
-        {{ this.getMessageError('nome') }}
+        {{ this.getMessageError('name') }}
       </div>
       <div class="valid-feedback">
         Looks good!

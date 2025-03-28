@@ -1,6 +1,10 @@
+import { AlertModalService } from './../../shared/services/alert-modal.service';
+import { CursosService } from './../cursos.service';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ValidationMessages } from '../../validation/validation-message';
+import { AlertTypes } from '../../shared/alert-typer.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cursos-form',
@@ -13,11 +17,11 @@ export class CursosFormComponent implements OnInit{
   messageError: string = "";
 
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private cursosService: CursosService, private alertModalService: AlertModalService, private router: Router) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      nome: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]]
+      name: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(250)]]
     });
   }
 
@@ -25,19 +29,26 @@ export class CursosFormComponent implements OnInit{
     this.submitted = true;
 
     if (this.form.valid) {
-      console.log('submit');
+      console.log('submit', this.form.value);
+      this.cursosService.createCourse(this.form.value).subscribe(
+        success => {
+          var nameCourse = this.form.value['name'];
+          this.alertModalService.showAlert(AlertTypes.SUCCESS, `O curso ${nameCourse} foi inserido com sucesso.`, 3000);
+          this.router.navigate(['/cursos'])
+        },
+        error => this.alertModalService.showAlert(AlertTypes.DANGER, 'Error ao criar curso, tente novamente'),
+        () =>  console.log()
+
+      );
     }
   }
 
   onCancel() {
     this.submitted = false;
     this.form.reset();
-    console.log("cancel");
   }
 
   hasError(field: string): boolean {
-    console.log(this.form.get(field)?.errors);
-
     return this.form.get(field)?.errors == null ? false : true;
   }
 

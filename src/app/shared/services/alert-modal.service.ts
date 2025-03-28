@@ -12,9 +12,15 @@ export class AlertModalService {
 
   constructor(private modalService: BsModalService) { }
 
-  showAlert(type: AlertTypes = AlertTypes.DANGER, message: string = 'Ocorreu um Error') {
+  showAlert(type: AlertTypes = AlertTypes.DANGER, message: string = 'Ocorreu um Error', dismissTimeout?: number) {
     this.modalRef = this.modalService.show(AlertModalComponent);
     this.modalRef.content.type = type;
     this.modalRef.content.message = message;
+
+    if (dismissTimeout) {
+      setTimeout(() => {
+        this.modalRef.hide();
+      }, dismissTimeout);
+    }
   }
 }
